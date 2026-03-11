@@ -1,0 +1,56 @@
+╔══════════════════════════════════════════════════════════════╗
+║      GML SRLS PWA — Istruzioni Installazione Android         ║
+╚══════════════════════════════════════════════════════════════╝
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  PASSO 1 — Pubblica l'app su GitHub Pages (gratis)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Vai su github.com → crea account gratuito se non ce l'hai
+2. Clicca "+" in alto a destra → "New repository"
+3. Nome: gml-srls   (tutto minuscolo)
+4. Spunta "Public" → clicca "Create repository"
+5. Clicca "uploading an existing file"
+6. Trascina TUTTI i file della cartella "gml-pwa":
+   - index.html
+   - manifest.json
+   - sw.js
+   - cartella icons/ (con tutte le icone dentro)
+7. Clicca "Commit changes"
+8. Vai in Settings → Pages → Source: "main" → Save
+9. Dopo 1 minuto il sito è online su:
+   https://[tuonomeutente].github.io/gml-srls
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  PASSO 2 — Installa sul telefono Android
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Apri Chrome sul telefono Android
+2. Vai all'indirizzo: https://[tuonomeutente].github.io/gml-srls
+3. Apparirà un banner "Installa GML SRLS" oppure:
+   - Clicca i 3 puntini in alto a destra
+   - Seleziona "Aggiungi a schermata Home"
+4. Clicca "Installa" → l'app appare come icona sul telefono!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  PASSO 3 — Attiva sincronizzazione Firebase
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Usa le stesse credenziali Firebase già configurate sul PC:
+
+  API KEY:    AIzaSyD9M8fcrVNQMcuy7yWFrRv8j588_NHZlWQ
+  PROJECT ID: gml-presenze
+  CODICE:     gml-srls
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Vantaggi PWA vs APK tradizionale
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ✅ Funziona offline (dati salvati sul telefono)
+  ✅ Si sincronizza con PC via Firebase
+  ✅ Nessun Google Play Store necessario
+  ✅ Si aggiorna automaticamente
+  ✅ Funziona anche su iPhone (Safari → Condividi → Aggiungi)
+  ✅ Completamente gratuito
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

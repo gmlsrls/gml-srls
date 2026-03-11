@@ -1,0 +1,1787 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GML SRLS">
+<meta name="theme-color" content="#0f1629">
+<title>GML SRLS</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192x192.png">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<style>
+:root{
+  /* Core palette — deep slate + warm white + amber */
+  --bg:       #f0f2f7;
+  --surface:  #ffffff;
+  --surface2: #f7f8fc;
+  --surface3: #eef0f7;
+  --border:   #dde1ed;
+  --border2:  #c8cee0;
+
+  /* Brand */
+  --accent:   #e07b00;
+  --accent-l: #f59e2a;
+  --accent-bg:#fff7ed;
+
+  /* Semantic */
+  --green:    #16a34a;
+  --green-bg: #f0fdf4;
+  --red:      #dc2626;
+  --red-bg:   #fef2f2;
+  --blue:     #1d6fce;
+  --blue-bg:  #eff6ff;
+  --purple:   #7c3aed;
+  --purple-bg:#f5f3ff;
+
+  /* Typography */
+  --text:     #0f1629;
+  --text2:    #374264;
+  --muted:    #6b7494;
+  --muted2:   #9ba3bf;
+
+  /* Fonts */
+  --fh: 'Fraunces', Georgia, serif;
+  --fm: 'IBM Plex Mono', 'Courier New', monospace;
+  --fb: 'Plus Jakarta Sans', system-ui, sans-serif;
+
+  /* Layout */
+  --sidebar-w:    240px;
+  --topbar-h:     64px;
+  --bottomnav-h:  60px;
+  --radius:       12px;
+  --radius-lg:    16px;
+  --shadow-sm:    0 1px 3px rgba(15,22,41,.08), 0 1px 2px rgba(15,22,41,.04);
+  --shadow:       0 4px 12px rgba(15,22,41,.08), 0 2px 4px rgba(15,22,41,.05);
+  --shadow-lg:    0 12px 40px rgba(15,22,41,.12), 0 4px 12px rgba(15,22,41,.06);
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);display:flex;flex-direction:column;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+
+/* ══ LAYOUT ══════════════════════════════════════════ */
+.app{display:flex;flex:1;height:100vh;overflow:hidden;}
+
+/* ── SIDEBAR ─────────────────────────────────────── */
+.sidebar{
+  width:var(--sidebar-w);flex-shrink:0;
+  background:var(--text);
+  display:flex;flex-direction:column;overflow-y:auto;
+  transition:transform .3s ease;z-index:50;
+}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(15,22,41,.5);z-index:49;backdrop-filter:blur(3px);}
+
+.logo{padding:22px 20px 20px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:12px;}
+.logo-icon{
+  width:40px;height:40px;border-radius:10px;
+  background:var(--accent);display:flex;align-items:center;justify-content:center;
+  font-size:20px;flex-shrink:0;box-shadow:0 4px 12px rgba(224,123,0,.4);
+}
+.logo-text{font-family:var(--fh);font-weight:600;font-size:16px;line-height:1.2;color:#fff;letter-spacing:-.2px;}
+.logo-sub{font-size:9px;color:rgba(255,255,255,.4);font-family:var(--fm);letter-spacing:1.5px;text-transform:uppercase;margin-top:1px;}
+
+nav{padding:14px 12px;flex:1;display:flex;flex-direction:column;gap:2px;}
+.nav-section{font-size:9px;color:rgba(255,255,255,.3);font-family:var(--fm);letter-spacing:1.5px;text-transform:uppercase;padding:12px 8px 6px;margin-top:4px;}
+.nav-btn{
+  display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;
+  border:none;background:none;color:rgba(255,255,255,.55);font-family:var(--fb);
+  font-size:13.5px;font-weight:500;cursor:pointer;width:100%;text-align:left;
+  transition:all .18s;position:relative;
+}
+.nav-btn .icon{font-size:17px;width:22px;text-align:center;flex-shrink:0;opacity:.8;}
+.nav-btn:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.9);}
+.nav-btn.active{background:rgba(224,123,0,.2);color:#fff;}
+.nav-btn.active .icon{opacity:1;}
+.nav-btn.active::before{
+  content:'';position:absolute;left:0;top:20%;bottom:20%;
+  width:3px;border-radius:0 3px 3px 0;background:var(--accent);
+}
+
+.sidebar-footer{padding:16px;border-top:1px solid rgba(255,255,255,.08);}
+.date-display{font-family:var(--fm);font-size:10px;color:rgba(255,255,255,.35);line-height:1.8;}
+
+/* ── MAIN ────────────────────────────────────────── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.topbar{
+  height:var(--topbar-h);background:var(--surface);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 24px;gap:14px;flex-shrink:0;
+  box-shadow:var(--shadow-sm);
+}
+.hamburger{display:none;background:none;border:1px solid var(--border);cursor:pointer;color:var(--text2);font-size:18px;padding:6px 9px;border-radius:8px;transition:all .18s;}
+.hamburger:hover{background:var(--surface2);border-color:var(--border2);}
+.page-title{font-family:var(--fh);font-weight:600;font-size:20px;flex:1;color:var(--text);letter-spacing:-.3px;}
+.topbar-date{font-family:var(--fm);font-size:11px;color:var(--muted);white-space:nowrap;background:var(--surface2);padding:5px 12px;border-radius:20px;border:1px solid var(--border);}
+
+/* BUTTONS */
+.btn{
+  padding:9px 18px;border-radius:9px;border:none;cursor:pointer;
+  font-family:var(--fb);font-size:13px;font-weight:600;transition:all .18s;
+  display:inline-flex;align-items:center;gap:7px;white-space:nowrap;letter-spacing:-.1px;
+}
+.btn-primary{
+  background:var(--accent);color:#fff;
+  box-shadow:0 2px 8px rgba(224,123,0,.35);
+}
+.btn-primary:hover{background:#c96e00;box-shadow:0 4px 14px rgba(224,123,0,.45);transform:translateY(-1px);}
+.btn-primary:active{transform:translateY(0);}
+.btn-ghost{
+  background:var(--surface);color:var(--text2);
+  border:1.5px solid var(--border);
+}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg);}
+.btn-danger{background:var(--red-bg);color:var(--red);border:1.5px solid rgba(220,38,38,.2);}
+.btn-danger:hover{background:rgba(220,38,38,.12);}
+.btn-sm{padding:7px 14px;font-size:12px;}
+.btn-icon{padding:8px 10px;font-size:14px;}
+
+.content{flex:1;overflow-y:auto;padding:24px;-webkit-overflow-scrolling:touch;}
+.content::-webkit-scrollbar{width:5px;}
+.content::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+/* ── BOTTOM NAV (mobile) ─────────────────────────── */
+.bottom-nav{
+  display:none; /* disabled */height:var(--bottomnav-h);background:var(--surface);
+  border-top:1.5px solid var(--border);flex-shrink:0;
+  justify-content:space-around;align-items:center;padding:0 4px;z-index:40;
+  box-shadow:0 -2px 12px rgba(15,22,41,.06);
+}
+.bn-btn{
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  border:none;background:none;color:var(--muted2);font-size:9px;
+  font-family:var(--fb);font-weight:600;
+  padding:6px 8px;border-radius:10px;cursor:pointer;transition:all .18s;min-width:52px;
+}
+.bn-btn .icon{font-size:20px;line-height:1;}
+.bn-btn.active{color:var(--accent);}
+
+/* ── PAGES ────────────────────────────────────────── */
+.page{display:none;animation:fadeIn .22s ease;} .page.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── STAT CARDS ───────────────────────────────────── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.stat-card{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:var(--radius-lg);padding:20px;
+  position:relative;overflow:hidden;box-shadow:var(--shadow-sm);
+  transition:box-shadow .2s,transform .2s;
+}
+.stat-card:hover{box-shadow:var(--shadow);transform:translateY(-1px);}
+.stat-card::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:3px 3px 0 0;
+}
+.stat-card.orange::after{background:linear-gradient(90deg,var(--accent),var(--accent-l));}
+.stat-card.green::after{background:var(--green);}
+.stat-card.red::after{background:var(--red);}
+.stat-card.blue::after{background:var(--blue);}
+.stat-icon{
+  width:40px;height:40px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-size:20px;
+  margin-bottom:12px;
+}
+.stat-card.orange .stat-icon{background:var(--accent-bg);}
+.stat-card.green  .stat-icon{background:var(--green-bg);}
+.stat-card.red    .stat-icon{background:var(--red-bg);}
+.stat-card.blue   .stat-icon{background:var(--blue-bg);}
+.stat-label{font-size:11px;font-family:var(--fm);color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;font-weight:500;}
+.stat-value{font-family:var(--fh);font-weight:600;font-size:32px;line-height:1;letter-spacing:-1px;}
+.stat-value.orange{color:var(--accent);}
+.stat-value.green{color:var(--green);}
+.stat-value.red{color:var(--red);}
+.stat-value.blue{color:var(--blue);}
+.stat-sub{font-size:11.5px;color:var(--muted);margin-top:5px;font-weight:500;}
+
+/* ── CARD ─────────────────────────────────────────── */
+.card{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:var(--radius-lg);overflow:hidden;margin-bottom:20px;
+  box-shadow:var(--shadow-sm);
+}
+.card-header{
+  padding:16px 20px;border-bottom:1.5px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:8px;background:var(--surface2);
+}
+.card-title{font-family:var(--fh);font-weight:600;font-size:15px;color:var(--text);letter-spacing:-.2px;}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+table{width:100%;border-collapse:collapse;min-width:400px;}
+th{
+  padding:11px 18px;text-align:left;font-size:10.5px;font-family:var(--fm);
+  color:var(--muted);text-transform:uppercase;letter-spacing:.8px;
+  border-bottom:1.5px solid var(--border);background:var(--surface2);
+  white-space:nowrap;font-weight:500;
+}
+td{padding:13px 18px;font-size:13.5px;border-bottom:1px solid var(--border);color:var(--text2);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--surface2);}
+
+/* mobile card rows */
+.mobile-rows{display:none;}
+.mob-row{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:var(--radius);padding:16px;margin-bottom:10px;
+  box-shadow:var(--shadow-sm);
+}
+.mob-row-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.mob-row-name{font-weight:700;font-size:15px;color:var(--text);}
+.mob-row-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.mob-field{font-size:12px;color:var(--text2);}
+.mob-field-label{color:var(--muted);font-family:var(--fm);font-size:9px;text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px;}
+
+/* ── BADGES ───────────────────────────────────────── */
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11.5px;font-weight:600;}
+.badge-green {background:var(--green-bg); color:var(--green); border:1px solid rgba(22,163,74,.2);}
+.badge-red   {background:var(--red-bg);   color:var(--red);   border:1px solid rgba(220,38,38,.2);}
+.badge-orange{background:var(--accent-bg);color:var(--accent);border:1px solid rgba(224,123,0,.2);}
+.badge-blue  {background:var(--blue-bg);  color:var(--blue);  border:1px solid rgba(29,111,206,.2);}
+.dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0;}
+
+/* ── AVATAR ───────────────────────────────────────── */
+.avatar{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;}
+
+/* ── MODAL ────────────────────────────────────────── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,22,41,.55);z-index:100;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px);}
+.modal-overlay.open{display:flex;}
+.modal{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:20px 20px 0 0;padding:8px 20px 32px;
+  width:100%;max-width:560px;max-height:92vh;overflow-y:auto;
+  animation:slideUp .28s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:var(--shadow-lg);
+}
+@keyframes slideUp{from{transform:translateY(80px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-drag{width:40px;height:4px;background:var(--border2);border-radius:2px;margin:12px auto 18px;}
+.modal-title{font-family:var(--fh);font-weight:600;font-size:20px;margin-bottom:18px;color:var(--text);letter-spacing:-.3px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
+.form-group{display:flex;flex-direction:column;gap:5px;} .form-group.full{grid-column:1/-1;}
+label{font-size:10.5px;font-family:var(--fm);color:var(--muted);text-transform:uppercase;letter-spacing:.7px;font-weight:500;}
+input,select,textarea{
+  padding:11px 13px;background:var(--surface2);border:1.5px solid var(--border);
+  border-radius:10px;color:var(--text);font-family:var(--fb);font-size:14px;
+  transition:border-color .18s,box-shadow .18s;width:100%;font-weight:500;
+}
+input:focus,select:focus,textarea:focus{
+  outline:none;border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(224,123,0,.12);
+}
+select option{background:var(--surface);}
+.modal-footer{display:flex;gap:10px;margin-top:20px;}
+.modal-footer .btn{flex:1;justify-content:center;padding:13px;}
+
+/* ── BILLING ──────────────────────────────────────── */
+.billing-header{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.billing-select{
+  padding:9px 14px;background:var(--surface);border:1.5px solid var(--border);
+  border-radius:9px;color:var(--text);font-family:var(--fb);font-size:13.5px;
+  cursor:pointer;font-weight:600;
+}
+.billing-select:focus{outline:none;border-color:var(--accent);}
+.billing-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-lg);margin-bottom:14px;overflow:hidden;box-shadow:var(--shadow-sm);}
+.billing-card-header{
+  padding:16px 18px;display:flex;align-items:center;gap:13px;
+  border-bottom:1.5px solid var(--border);background:var(--surface2);flex-wrap:wrap;
+}
+.billing-total{margin-left:auto;font-family:var(--fh);font-weight:600;font-size:20px;color:var(--accent);letter-spacing:-.5px;}
+
+/* ── CALENDAR ─────────────────────────────────────── */
+.cal-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
+.cal-month-label{font-family:var(--fh);font-weight:700;font-size:22px;flex:1;text-align:center;color:var(--text);letter-spacing:-.5px;}
+.cal-legend{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
+.cal-legend-item{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;color:var(--text2);}
+.cal-legend-chip{width:32px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;}
+.cal-wrap{
+  overflow-x:auto;-webkit-overflow-scrolling:touch;
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow);background:var(--surface);
+  border:1.5px solid var(--border);
+}
+.cal-table{border-collapse:collapse;width:100%;}
+
+/* Header row */
+.cal-table thead tr{background:var(--text);}
+.cal-table th{
+  padding:10px 4px;text-align:center;font-family:var(--fm);font-size:10px;
+  color:rgba(255,255,255,.5);border:none;
+  background:var(--text);white-space:nowrap;min-width:54px;font-weight:600;letter-spacing:.3px;
+}
+.cal-table th.driver-th{
+  text-align:left;padding:12px 18px;min-width:160px;
+  position:sticky;left:0;z-index:3;background:var(--text);
+  font-size:11px;color:rgba(255,255,255,.6);letter-spacing:.5px;text-transform:uppercase;
+}
+.th-we{color:var(--accent-l) !important;}
+.th-today{color:#fff !important;position:relative;}
+.th-today::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  width:20px;height:2.5px;background:var(--accent);border-radius:2px;}
+
+/* Driver name column */
+.cal-table td{border:1px solid var(--border);vertical-align:middle;padding:0;}
+.cal-table td.driver-td{
+  background:var(--surface2);position:sticky;left:0;z-index:2;
+  padding:0 18px;min-width:160px;height:52px;
+  border-right:2px solid var(--border2);border-bottom:1px solid var(--border);
+}
+.cal-table td.driver-td .dn{font-weight:700;font-size:13px;color:var(--text);line-height:1.3;}
+.cal-table td.driver-td .di{font-size:10px;color:var(--muted);font-family:var(--fm);}
+
+/* Day cells */
+.cal-cell{
+  min-width:54px;width:54px;height:52px;cursor:pointer;
+  transition:all .15s ease;padding:0;text-align:center;
+  display:table-cell;vertical-align:middle;position:relative;
+}
+.cal-cell:hover{transform:scale(1.05);z-index:5;box-shadow:0 2px 12px rgba(0,0,0,.15);border-radius:6px;}
+.cc-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:1px;padding:4px 2px;}
+.cc-s{font-size:13px;font-weight:800;line-height:1;letter-spacing:-.3px;}
+.cc-h{font-size:8px;color:var(--muted);font-family:var(--fm);line-height:1.2;font-weight:500;}
+.cc-f{font-size:8px;font-family:var(--fm);line-height:1.2;font-weight:600;}
+
+/* Status colors — clear & bold */
+.s-p{background:#e6f9ee;}  .s-p .cc-s{color:#0d8a3e;} .s-p .cc-f{color:#0d8a3e;}
+.s-f{background:#e8f2ff;}  .s-f .cc-s{color:#1558b0;} .s-f .cc-f{color:#1558b0;}
+.s-x{background:#f0ebff;}  .s-x .cc-s{color:#6025c4;} .s-x .cc-f{color:#6025c4;}
+.s-a{background:#fff5f5;}  .s-a .cc-s{color:#c0392b; opacity:.7;}
+.s-e{background:var(--surface2);} .s-e .cc-s{color:var(--border2);}
+.s-w{background:#fafafa;}  .s-w .cc-s{color:var(--border);}
+/* Today highlight */
+.s-today{outline:2.5px solid var(--accent);outline-offset:-2px;border-radius:4px;}
+/* Alternating driver rows */
+.cal-table tbody tr:nth-child(even) td.driver-td{background:#f0f2f9;}
+
+/* ── CELL POPUP ───────────────────────────────────── */
+#cell-popup{
+  display:none;position:fixed;z-index:200;
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:16px;padding:20px;
+  box-shadow:var(--shadow-lg);min-width:260px;
+}
+#cell-popup input,#cell-popup select{font-size:14px;padding:11px 13px;}
+
+/* ── TOAST ────────────────────────────────────────── */
+.toast{
+  position:fixed;bottom:80px;left:50%;
+  transform:translateX(-50%) translateY(60px);
+  background:var(--text);color:#fff;
+  border-radius:30px;padding:12px 22px;font-size:13px;font-weight:600;
+  z-index:999;transition:transform .28s cubic-bezier(.34,1.56,.64,1),opacity .28s ease;
+  opacity:0;white-space:nowrap;box-shadow:var(--shadow-lg);
+  border-left:3px solid var(--green);
+}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+
+/* ── EMPTY ────────────────────────────────────────── */
+.empty{text-align:center;padding:48px 20px;color:var(--muted);}
+.empty-icon{font-size:40px;margin-bottom:12px;opacity:.5;}
+.empty p{font-size:13.5px;line-height:1.6;color:var(--muted);}
+
+/* ── FILTER BAR ───────────────────────────────────── */
+.filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.filter-bar input,.filter-bar select{width:auto;padding:9px 13px;font-size:13px;}
+
+/* ── INFO BOX ─────────────────────────────────────── */
+.info-box{background:var(--accent-bg);border:1.5px solid rgba(224,123,0,.25);border-radius:10px;padding:11px 14px;font-size:12px;color:var(--accent);font-family:var(--fm);font-weight:500;}
+
+/* ══ RESPONSIVE ══════════════════════════════════════ */
+@media(max-width:1100px){
+  :root{--sidebar-w:210px;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .content{padding:18px;}
+}
+@media(max-width:640px){
+  .sidebar{position:fixed;top:0;left:0;bottom:0;z-index:50;transform:translateX(-100%);box-shadow:8px 0 32px rgba(15,22,41,.2);}
+  .sidebar.open{transform:translateX(0);}
+  .sidebar-overlay.open{display:block;}
+  .hamburger{display:flex;}
+  .topbar-date{display:none;}
+  .bottom-nav{display:none !important;}
+  .content{padding:14px;padding-bottom:calc(var(--bottomnav-h) + 14px);}
+  .stats-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
+  .stat-card{padding:14px;}
+  .stat-value{font-size:24px;}
+  .form-grid{grid-template-columns:1fr;}
+  .form-group.full{grid-column:1;}
+  .billing-header{flex-direction:column;align-items:stretch;}
+  .billing-select,.billing-header .btn{width:100%;justify-content:center;}
+  .desktop-table{display:none;}
+  .mobile-rows{display:block;}
+  .cal-table th{min-width:44px;}
+  .cal-cell{min-width:44px;width:44px;}
+  .cal-table th.driver-th,.cal-table td.driver-td{min-width:110px;}
+  .cc-h,.cc-f{display:none;}
+  .cc-a{display:none;}
+  .toast{bottom:calc(var(--bottomnav-h) + 14px);}
+  .filter-bar{flex-direction:column;align-items:stretch;}
+  .filter-bar input,.filter-bar select,.filter-bar .btn{width:100%;}
+}
+@media(min-width:1280px){
+  .content{padding:28px 32px;}
+  .stats-grid{gap:20px;}
+}
+</style>
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="logo">
+      <span class="logo-icon">🚛</span>
+      <div>
+        <div class="logo-text">GML SRLS</div>
+        <div class="logo-sub">Autotrasporti</div>
+      </div>
+    </div>
+    <nav>
+      <button class="nav-btn active" onclick="showPage('dashboard')" id="nav-dashboard"><span class="icon">📊</span> Dashboard</button>
+      <button class="nav-btn" onclick="showPage('autisti')" id="nav-autisti"><span class="icon">👤</span> Autisti</button>
+      <button class="nav-btn" onclick="showPage('presenze')" id="nav-presenze"><span class="icon">📋</span> Presenze</button>
+      <button class="nav-btn" onclick="showPage('fatturazione')" id="nav-fatturazione"><span class="icon">💶</span> Fatturazione</button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="date-display" id="sidebar-date" style="margin-bottom:12px">—</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <button id="btn-install" onclick="installPWA()" style="display:none;width:100%;justify-content:center;font-size:11px;margin-bottom:6px;background:var(--accent);color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:600">
+          📲 Installa App
+        </button>
+        <button class="btn btn-ghost btn-sm" onclick="openSyncModal()" style="width:100%;justify-content:center;font-size:11px;color:var(--blue)">
+          ☁️ Sincronizzazione Online
+        </button>
+        <button class="btn btn-ghost btn-sm" onclick="exportJSON()" style="width:100%;justify-content:center;font-size:11px">
+          💾 Backup Locale
+        </button>
+        <button class="btn btn-ghost btn-sm" onclick="importJSON()" style="width:100%;justify-content:center;font-size:11px">
+          📂 Ripristina Backup
+        </button>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <button class="hamburger" onclick="toggleSidebar()">☰</button>
+      <div class="page-title" id="page-title">Dashboard</div>
+      <div class="topbar-date" id="topbar-date">—</div>
+      <button class="btn btn-primary btn-sm" id="topbar-action" onclick="topbarAction()">+ Aggiungi</button>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="stats-grid">
+          <div class="stat-card orange">
+            <div class="stat-icon">🚛</div>
+            <div class="stat-label">Autisti Totali</div>
+            <div class="stat-value orange" id="stat-total">0</div>
+            <div class="stat-sub">registrati</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-icon">✅</div>
+            <div class="stat-label">Presenti Oggi</div>
+            <div class="stat-value green" id="stat-present">0</div>
+            <div class="stat-sub">in servizio</div>
+          </div>
+          <div class="stat-card red">
+            <div class="stat-icon">❌</div>
+            <div class="stat-label">Assenti Oggi</div>
+            <div class="stat-value red" id="stat-absent">0</div>
+            <div class="stat-sub">non disponibili</div>
+          </div>
+          <div class="stat-card blue">
+            <div class="stat-icon">💶</div>
+            <div class="stat-label">Fatturato Mese</div>
+            <div class="stat-value blue" id="stat-revenue">€0</div>
+            <div class="stat-sub" id="stat-month-label">—</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- AUTISTI -->
+      <div class="page" id="page-autisti">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Lista Autisti</div>
+            <span style="font-size:11px;color:var(--muted);font-family:var(--fm)" id="autisti-count">0 autisti</span>
+          </div>
+          <!-- Desktop table -->
+          <div class="table-wrap desktop-table">
+            <table><thead><tr>
+              <th>Nome</th><th>Patente</th><th>Telefono</th><th>Stato</th><th>Azioni</th>
+            </tr></thead><tbody id="autisti-tbody"></tbody></table>
+          </div>
+          <!-- Mobile cards -->
+          <div class="mobile-rows" id="autisti-mobile" style="padding:12px;"></div>
+        </div>
+      </div>
+
+      <!-- PRESENZE CALENDARIO -->
+      <div class="page" id="page-presenze">
+        <div class="cal-toolbar">
+          <button class="btn btn-ghost btn-icon" onclick="calPrevMonth()" style="font-size:20px;padding:8px 14px">‹</button>
+          <div class="cal-month-label" id="cal-month-label"></div>
+          <button class="btn btn-ghost btn-icon" onclick="calNextMonth()" style="font-size:20px;padding:8px 14px">›</button>
+          <button class="btn btn-ghost btn-sm" onclick="exportCSVPresenze()">📥 CSV</button>
+        </div>
+        <div class="cal-legend">
+          <div class="cal-legend-item">
+            <div class="cal-legend-chip" style="background:#e6f9ee;color:#0d8a3e">P</div>
+            Presenza
+          </div>
+          <div class="cal-legend-item">
+            <div class="cal-legend-chip" style="background:#e8f2ff;color:#1558b0">FR</div>
+            Ferie
+          </div>
+          <div class="cal-legend-item">
+            <div class="cal-legend-chip" style="background:#f0ebff;color:#6025c4">FS</div>
+            Festivo
+          </div>
+          <div class="cal-legend-item">
+            <div class="cal-legend-chip" style="background:#fff5f5;color:#c0392b">A</div>
+            Assente
+          </div>
+          <div class="cal-legend-item" style="margin-left:auto;font-size:11px;color:var(--muted);font-weight:400">
+            Clicca su una cella per registrare
+          </div>
+        </div>
+        <div class="cal-wrap"><div id="cal-grid"></div></div>
+      </div>
+
+      <!-- FATTURAZIONE -->
+      <div class="page" id="page-fatturazione">
+        <div class="billing-header">
+          <select class="billing-select" id="billing-month" onchange="renderBilling()"></select>
+          <select class="billing-select" id="billing-year" onchange="renderBilling()"></select>
+          <button class="btn btn-ghost btn-sm" onclick="exportCSV()">📥 CSV</button>
+        <button class="btn btn-ghost btn-sm" onclick="exportPDF()">📄 Report Presenze</button>
+        <button class="btn btn-primary btn-sm" onclick="exportFatturatoPDF()">💶 Report Fatturato</button>
+        </div>
+        <div id="billing-content"></div>
+      </div>
+
+    </div><!-- /content -->
+
+    <!-- BOTTOM NAV (mobile only) -->
+    <nav class="bottom-nav">
+      <button class="bn-btn active" onclick="showPage('dashboard')" id="bn-dashboard"><span class="icon">📊</span>Home</button>
+      <button class="bn-btn" onclick="showPage('autisti')" id="bn-autisti"><span class="icon">👤</span>Autisti</button>
+      <button class="bn-btn" onclick="showPage('presenze')" id="bn-presenze"><span class="icon">📋</span>Presenze</button>
+      <button class="bn-btn" onclick="showPage('fatturazione')" id="bn-fatturazione"><span class="icon">💶</span>Fatture</button>
+    </nav>
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- MODAL AUTISTA -->
+<div class="modal-overlay" id="modal-autista">
+  <div class="modal">
+    <div class="modal-drag"></div>
+    <div class="modal-title" id="modal-autista-title">Nuovo Autista</div>
+    <div class="form-grid">
+      <div class="form-group full"><label>Nome Completo *</label><input type="text" id="f-name" placeholder="Mario Rossi" autocomplete="off"></div>
+      <div class="form-group"><label>N° Patente</label><input type="text" id="f-license" placeholder="AB1234567"></div>
+      <div class="form-group"><label>Telefono</label><input type="tel" id="f-phone" placeholder="+39 340 000 0000"></div>
+      <div class="form-group full"><label>Paga Giornaliera (€) — prime 9 ore</label><input type="number" id="f-daily" placeholder="90.00" step="1" min="0" inputmode="decimal"></div>
+
+      <div class="form-group"><label>Tipo Contratto</label>
+        <select id="f-contract"><option value="dipendente">Dipendente</option><option value="libero_professionista">Libero Prof.</option><option value="collaboratore">Collaboratore</option></select>
+      </div>
+      <div class="form-group"><label>Stato</label>
+        <select id="f-status"><option value="attivo">Attivo</option><option value="inattivo">Inattivo</option></select>
+      </div>
+      <div class="form-group full"><label>Note</label><textarea id="f-notes" rows="2" placeholder="Note aggiuntive..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-autista')">Annulla</button>
+      <button class="btn btn-primary" onclick="saveAutista()">💾 Salva</button>
+    </div>
+  </div>
+</div>
+
+<!-- CELL POPUP -->
+<div id="cell-popup">
+  <div id="popup-title" style="font-family:var(--fh);font-weight:700;font-size:14px;margin-bottom:14px;color:var(--text)"></div>
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <select id="popup-status" onchange="updatePopupHint()">
+      <option value="presente">✅ Presente</option>
+      <option value="ferie">🏖 Ferie</option>
+      <option value="festivo">🎉 Festivo</option>
+      <option value="assente">❌ Assente</option>
+    </select>
+    <div id="popup-ore-row" style="display:flex;align-items:center;gap:8px">
+      <label style="font-size:10px;color:var(--muted);font-family:var(--fm);text-transform:uppercase;min-width:30px">Ore</label>
+      <input type="number" id="popup-hours" min="0" max="24" step="0.5" style="width:85px;text-align:center" inputmode="decimal" oninput="updatePopupHint()">
+    </div>
+    <div>
+      <label style="font-size:10px;color:var(--muted);font-family:var(--fm);text-transform:uppercase;letter-spacing:.7px;display:block;margin-bottom:5px">💼 Fatturato al Cliente (€)</label>
+      <input type="number" id="popup-fatturato" min="0" step="0.01" placeholder="0.00" inputmode="decimal"
+        style="width:100%;text-align:right;font-family:var(--fm);font-size:18px;font-weight:700;color:var(--accent)">
+    </div>
+    <input type="text" id="popup-note" placeholder="Note...">
+    <div style="display:flex;gap:8px;margin-top:2px">
+      <button class="btn btn-primary" style="flex:1;justify-content:center;padding:12px" onclick="saveCell()">💾 Salva</button>
+      <button class="btn btn-ghost btn-icon" onclick="closePopup()">✕</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">✅ Salvato</div>
+
+<script>
+// ── STATE ────────────────────────────────────────────────────
+var state = { autisti:[], presenze:{}, editingId:null };
+var isElectron = (typeof window !== 'undefined' && window.electronAPI !== undefined);
+
+// ── Firebase sync ─────────────────────────────────────────────
+var _fbApp = null, _fbDb = null, _fbCompany = null;
+var _syncEnabled = false, _syncUnsubscribe = null;
+
+function loadSyncConfig(){
+  try{
+    var raw = isElectron ? null : localStorage.getItem('gml_sync');
+    if(isElectron && window.electronAPI.loadSync){
+      return; // handled async in initSync
+    }
+    if(raw){ var cfg=JSON.parse(raw); initFirebase(cfg.apiKey,cfg.projectId,cfg.company); }
+  }catch(e){}
+}
+
+function initFirebase(apiKey, projectId, company){
+  try{
+    if(_fbApp) { try{ _fbApp.delete(); }catch(e){} }
+    _fbApp = firebase.initializeApp({ apiKey:apiKey, projectId:projectId }, 'gml-'+Date.now());
+    _fbDb  = firebase.firestore(_fbApp);
+    _fbCompany = company || 'default';
+    _syncEnabled = true;
+    updateSyncIndicator('connecting');
+    // Listen for remote changes
+    if(_syncUnsubscribe) _syncUnsubscribe();
+    _syncUnsubscribe = _fbDb.collection('companies').doc(_fbCompany)
+      .onSnapshot(function(doc){
+        if(doc.exists){
+          var d = doc.data();
+          if(d && d.snap){
+            try{
+              var p = JSON.parse(d.snap);
+              // Only update if remote is newer
+              if(!d.ts || (d.ts && (!_lastSaveTs || d.ts > _lastSaveTs + 3000))){
+                state.autisti  = p.autisti  || state.autisti;
+                state.presenze = p.presenze || state.presenze;
+                renderDashboard(); renderAutisti(); renderCalendar(); renderBilling();
+              }
+            }catch(ex){}
+          }
+        }
+        updateSyncIndicator('ok');
+      }, function(err){
+        updateSyncIndicator('error');
+      });
+    updateSyncIndicator('ok');
+    return true;
+  }catch(e){
+    _syncEnabled=false;
+    updateSyncIndicator('error');
+    return false;
+  }
+}
+
+var _lastSaveTs = 0;
+function saveToCloud(snap){
+  if(!_syncEnabled||!_fbDb) return;
+  _lastSaveTs = Date.now();
+  updateSyncIndicator('saving');
+  _fbDb.collection('companies').doc(_fbCompany).set({
+    snap: snap,
+    ts: _lastSaveTs
+  }).then(function(){
+    updateSyncIndicator('ok');
+  }).catch(function(){
+    updateSyncIndicator('error');
+  });
+}
+
+function updateSyncIndicator(status){
+  var el = document.getElementById('sync-indicator');
+  if(!el) return;
+  var cfg = {
+    ok:          { text:'☁️ Sync OK',      bg:'#f0fdf4', color:'#16a34a', border:'#86efac' },
+    saving:      { text:'☁️ Salvataggio…', bg:'#fffbeb', color:'#d97706', border:'#fcd34d' },
+    connecting:  { text:'☁️ Connessione…', bg:'#eff6ff', color:'#1d6fce', border:'#93c5fd' },
+    error:       { text:'☁️ Errore Sync',  bg:'#fef2f2', color:'#dc2626', border:'#fca5a5' },
+    off:         { text:'☁️ Sync',         bg:'var(--surface2)', color:'var(--muted)', border:'var(--border)' }
+  };
+  var s = cfg[status] || cfg.off;
+  el.textContent  = s.text;
+  el.style.background = s.bg;
+  el.style.color      = s.color;
+  el.style.borderColor= s.border;
+}
+
+function openSyncModal(){
+  // Load saved config into fields
+  var cfg = getSyncConfig();
+  if(cfg){
+    document.getElementById('fb-apikey').value    = cfg.apiKey    || '';
+    document.getElementById('fb-projectid').value = cfg.projectId || '';
+    document.getElementById('fb-company').value   = cfg.company   || '';
+  }
+  updateSyncStatusBox();
+  document.getElementById('modal-sync').style.display='flex';
+}
+function closeSyncModal(){ document.getElementById('modal-sync').style.display='none'; }
+
+function getSyncConfig(){
+  try{
+    var raw = localStorage.getItem('gml_sync_cfg');
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ return null; }
+}
+function setSyncConfig(cfg){
+  localStorage.setItem('gml_sync_cfg', JSON.stringify(cfg));
+  if(isElectron && window.electronAPI.saveSyncConfig){
+    window.electronAPI.saveSyncConfig(JSON.stringify(cfg));
+  }
+}
+
+function saveSyncConfig(){
+  var apiKey    = document.getElementById('fb-apikey').value.trim();
+  var projectId = document.getElementById('fb-projectid').value.trim();
+  var company   = document.getElementById('fb-company').value.trim() || 'gml-srls';
+  if(!apiKey || !projectId){ alert('Inserisci API Key e Project ID.'); return; }
+  setSyncConfig({apiKey, projectId, company});
+  var ok = initFirebase(apiKey, projectId, company);
+  if(ok){
+    // Push current data immediately
+    var snap = JSON.stringify({autisti:state.autisti, presenze:state.presenze});
+    saveToCloud(snap);
+    toast('Connesso! Dati sincronizzati.');
+  } else {
+    toast('Errore connessione. Controlla le credenziali.');
+  }
+  updateSyncStatusBox();
+  closeSyncModal();
+}
+
+function syncNow(){
+  if(!_syncEnabled){ toast('Configura prima la sincronizzazione.'); return; }
+  var snap = JSON.stringify({autisti:state.autisti, presenze:state.presenze});
+  saveToCloud(snap);
+  toast('Sincronizzazione avviata…');
+}
+
+function disconnectSync(){
+  if(_syncUnsubscribe) _syncUnsubscribe();
+  _syncEnabled = false; _fbDb = null; _fbApp = null;
+  localStorage.removeItem('gml_sync_cfg');
+  if(isElectron && window.electronAPI.saveSyncConfig) window.electronAPI.saveSyncConfig('');
+  updateSyncIndicator('off');
+  closeSyncModal();
+  toast('Sincronizzazione disattivata.');
+}
+
+function updateSyncStatusBox(){
+  var box = document.getElementById('sync-status-box');
+  if(!box) return;
+  if(_syncEnabled){
+    box.style.background='#f0fdf4'; box.style.borderColor='#86efac';
+    box.style.color='#16a34a';
+    box.textContent='✅ Connesso — sincronizzazione attiva.';
+  } else {
+    var cfg = getSyncConfig();
+    if(cfg && cfg.apiKey){
+      box.style.background='#fef2f2'; box.style.borderColor='#fca5a5';
+      box.style.color='#dc2626';
+      box.textContent='❌ Credenziali salvate ma non connesso. Clicca Salva e Connetti.';
+    } else {
+      box.style.background='var(--surface2)'; box.style.borderColor='var(--border)';
+      box.style.color='var(--muted)';
+      box.textContent='⬜ Non configurato — inserisci le credenziali Firebase qui sotto.';
+    }
+  }
+}
+
+// ── Local storage (IndexedDB) ────────────────────────────────
+var _idb = null;
+function openIDB(){
+  return new Promise(function(res,rej){
+    if(_idb){res(_idb);return;}
+    var r=indexedDB.open('gml_srls',1);
+    r.onupgradeneeded=function(e){e.target.result.createObjectStore('kv');};
+    r.onsuccess=function(e){_idb=e.target.result;res(_idb);};
+    r.onerror=function(e){rej(e);};
+  });
+}
+function idbSet(key,val){
+  return openIDB().then(function(db){
+    return new Promise(function(res){
+      var tx=db.transaction('kv','readwrite');
+      tx.objectStore('kv').put(val,key);
+      tx.oncomplete=function(){res();};
+    });
+  });
+}
+function idbGet(key){
+  return openIDB().then(function(db){
+    return new Promise(function(res){
+      var tx=db.transaction('kv','readonly');
+      var req=tx.objectStore('kv').get(key);
+      req.onsuccess=function(e){res(e.target.result||null);};
+      req.onerror=function(){res(null);};
+    });
+  }).catch(function(){return null;});
+}
+
+function save(){
+  var snap = JSON.stringify({autisti:state.autisti, presenze:state.presenze});
+  idbSet('state', snap).catch(function(){
+    try{localStorage.setItem('gml_state',snap);}catch(e){}
+  });
+  if(_syncEnabled) saveToCloud(snap);
+}
+
+function load(){
+  return new Promise(function(resolve){
+    var cfg = getSyncConfig();
+    if(cfg && cfg.apiKey){ initFirebase(cfg.apiKey, cfg.projectId, cfg.company); }
+    else { updateSyncIndicator('off'); }
+
+    idbGet('state').then(function(d){
+      if(!d){ try{d=localStorage.getItem('gml_state');}catch(e){} }
+      if(d){ try{ var p=JSON.parse(d); state.autisti=p.autisti||[]; state.presenze=p.presenze||{}; }catch(ex){} }
+      resolve();
+    });
+  });
+}
+function exportJSON(){
+  var data = JSON.stringify({autisti:state.autisti, presenze:state.presenze}, null, 2);
+  if(isElectron){
+    window.electronAPI.exportBackup(data);
+  } else {
+    var blob = new Blob([data],{type:'application/json'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'backup_gml_'+new Date().toISOString().slice(0,10)+'.json';
+    a.click();
+  }
+  toast('Backup esportato!');
+}
+function importJSON(){
+  if(isElectron){
+    window.electronAPI.importBackup().then(function(d){
+      if(!d) return;
+      try{
+        var p=JSON.parse(d);
+        if(!p.autisti||!p.presenze) throw new Error('Formato non valido');
+        state.autisti=p.autisti; state.presenze=p.presenze;
+        save();
+        renderDashboard(); renderAutisti(); renderCalendar(); renderBilling();
+        toast('Dati ripristinati!');
+      }catch(ex){ alert('Errore nel file: '+ex.message); }
+    });
+  } else {
+    var input=document.createElement('input');
+    input.type='file'; input.accept='.json';
+    input.onchange=function(e){
+      var file=e.target.files[0]; if(!file) return;
+      var reader=new FileReader();
+      reader.onload=function(ev){
+        try{
+          var p=JSON.parse(ev.target.result);
+          if(!p.autisti||!p.presenze) throw new Error('Formato non valido');
+          state.autisti=p.autisti; state.presenze=p.presenze;
+          save();
+          renderDashboard(); renderAutisti(); renderCalendar(); renderBilling();
+          toast('Dati ripristinati!');
+        }catch(ex){ alert('Errore nel file: '+ex.message); }
+      };
+      reader.readAsText(file);
+    };
+    input.click();
+  }
+}
+
+// ── GLOBALS ───────────────────────────────────────────────────
+var calYear=0, calMonth=0;
+var popupDriverId=null, popupDate=null;
+var statusBadge={presente:'badge-green',ferie:'badge-blue',festivo:'badge-orange',assente:'badge-red'};
+var statusLabel={presente:'Presente',ferie:'Ferie',festivo:'Festivo',assente:'Assente'};
+var MESI=['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+var DOW=['Dom','Lun','Mar','Mer','Gio','Ven','Sab'];
+
+// ── INIT ─────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function(){
+  load().then(function(){
+  var now = new Date();
+  calYear = now.getFullYear(); calMonth = now.getMonth();
+
+  document.getElementById('sidebar-date').innerHTML =
+    now.toLocaleDateString('it-IT',{weekday:'long'})+' '+now.getDate()+' '+MESI[now.getMonth()]+' '+now.getFullYear();
+  document.getElementById('topbar-date').textContent = now.toLocaleDateString('it-IT');
+  // billing month/year selects
+  var ms=document.getElementById('billing-month');
+  MESI.forEach(function(m,i){ var o=document.createElement('option'); o.value=i+1; o.textContent=m; ms.appendChild(o); });
+  ms.value=now.getMonth()+1;
+  var ys=document.getElementById('billing-year');
+  for(var y=now.getFullYear();y>=now.getFullYear()-3;y--){
+    var o=document.createElement('option'); o.value=y; o.textContent=y; ys.appendChild(o);
+  }
+
+  // close popup on outside click
+  document.addEventListener('click', function(e){
+    var popup=document.getElementById('cell-popup');
+    if(popup.style.display==='block'&&!popup.contains(e.target)&&!e.target.closest('.cal-cell'))
+      closePopup();
+  });
+
+  renderDashboard(); renderAutisti(); renderCalendar();
+  renderBilling();
+  }); // end load().then
+});
+
+// ── HELPERS ───────────────────────────────────────────────────
+function dStr(d){ return d.toISOString().slice(0,10); }
+function uid(){ return Math.random().toString(36).slice(2,9); }
+function fmt(n){ return '€'+(n||0).toFixed(2); }
+function initials(n){ return n.split(' ').map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase(); }
+var AC=['#e8541a','#3498db','#2ecc71','#9b59b6','#f39c12','#1abc9c','#e74c3c'];
+function ac(n){ var h=0; for(var i=0;i<n.length;i++) h=(h+n.charCodeAt(i))%AC.length; return AC[h]; }
+function calcAmt(status,hours,daily){
+  if(status==='presente'&&daily) return daily+Math.max(0,hours-9)*10;
+  if(status==='ferie'||status==='festivo') return 70;
+  return 0;
+}
+function isMobile(){ return window.innerWidth<=640; }
+
+// ── SIDEBAR ───────────────────────────────────────────────────
+function toggleSidebar(){
+  var s=document.getElementById('sidebar');
+  var o=document.getElementById('sidebar-overlay');
+  s.classList.toggle('open');
+  o.classList.toggle('open');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
+}
+
+// ── NAVIGATION ────────────────────────────────────────────────
+function showPage(p){
+  document.querySelectorAll('.page').forEach(function(x){x.classList.remove('active');});
+  document.querySelectorAll('.nav-btn').forEach(function(x){x.classList.remove('active');});
+  document.querySelectorAll('.bn-btn').forEach(function(x){x.classList.remove('active');});
+  document.getElementById('page-'+p).classList.add('active');
+  var nb=document.getElementById('nav-'+p); if(nb) nb.classList.add('active');
+  var bb=document.getElementById('bn-'+p);  if(bb) bb.classList.add('active');
+  var titles={dashboard:'Dashboard',autisti:'Autisti',presenze:'Presenze',fatturazione:'Fatturazione',};
+  document.getElementById('page-title').textContent=titles[p]||p;
+  var acts={autisti:'+ Autista',dashboard:'+ Autista',presenze:'📥 CSV',fatturazione:'📥 CSV'};
+  document.getElementById('topbar-action').textContent=acts[p]||'Azioni';
+  closeSidebar();
+  if(p==='dashboard')    renderDashboard();
+  if(p==='autisti')      renderAutisti();
+  if(p==='presenze')     renderCalendar();
+  if(p==='fatturazione') renderBilling();
+}
+function topbarAction(){
+  var a=document.querySelector('.nav-btn.active')||document.querySelector('.bn-btn.active');
+  var p=a?a.id.replace('nav-','').replace('bn-',''):'dashboard';
+  if(p==='autisti'||p==='dashboard') openModalAutista();
+  if(p==='presenze')     exportCSVPresenze();
+  if(p==='fatturazione') exportCSV();
+}
+
+// ── AUTISTI ───────────────────────────────────────────────────
+function openModalAutista(id){
+  state.editingId=id||null;
+  document.getElementById('modal-autista-title').textContent=id?'Modifica Autista':'Nuovo Autista';
+  var a=id?(state.autisti.find(function(x){return x.id===id;})||{}):{};
+  document.getElementById('f-name').value    =a.name    ||'';
+  document.getElementById('f-license').value =a.license ||'';
+  document.getElementById('f-phone').value   =a.phone   ||'';
+  document.getElementById('f-daily').value   =a.daily   ||'';
+  document.getElementById('f-contract').value=a.contract||'dipendente';
+  document.getElementById('f-status').value  =a.status  ||'attivo';
+  document.getElementById('f-notes').value   =a.notes   ||'';
+  document.getElementById('modal-autista').classList.add('open');
+}
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function saveAutista(){
+  var name=document.getElementById('f-name').value.trim();
+  if(!name){alert('Inserire il nome!');return;}
+  var obj={
+    id:state.editingId||uid(), name:name,
+    license:document.getElementById('f-license').value.trim(),
+    phone:document.getElementById('f-phone').value.trim(),
+    daily:parseFloat(document.getElementById('f-daily').value)||0,
+    contract:document.getElementById('f-contract').value,
+    status:document.getElementById('f-status').value,
+    notes:document.getElementById('f-notes').value.trim()
+  };
+  if(state.editingId){
+    var i=state.autisti.findIndex(function(x){return x.id===state.editingId;});
+    obj.createdAt=state.autisti[i].createdAt;
+    state.autisti[i]=obj;
+  } else { obj.createdAt=new Date().toISOString(); state.autisti.push(obj); }
+  save(); closeModal('modal-autista'); renderAutisti(); renderDashboard(); renderCalendar();
+  toast('Autista salvato!');
+}
+function deleteAutista(id){
+  if(!confirm('Eliminare questo autista?')) return;
+  state.autisti=state.autisti.filter(function(x){return x.id!==id;});
+  save(); renderAutisti(); renderDashboard(); renderCalendar(); toast('Autista eliminato');
+}
+function renderAutisti(){
+  var list=state.autisti;
+  document.getElementById('autisti-count').textContent=list.length+' autisti';
+
+  // Desktop table
+  var tb=document.getElementById('autisti-tbody');
+  if(!list.length){
+    tb.innerHTML='<tr><td colspan="7"><div class="empty"><div class="empty-icon">👤</div><p>Nessun autista.<br>Clicca "+ Autista" per aggiungerne uno.</p></div></td></tr>';
+  } else {
+    tb.innerHTML=list.map(function(a){
+      return '<tr>'+
+        '<td style="display:flex;align-items:center;gap:10px">'+
+          '<div class="avatar" style="background:'+ac(a.name)+';color:#fff">'+initials(a.name)+'</div>'+
+          '<div><div style="font-weight:600">'+a.name+'</div>'+
+          '<div style="font-size:10px;color:var(--muted);font-family:var(--fm)">'+a.contract+'</div></div></td>'+
+        '<td style="font-family:var(--fm);font-size:12px">'+(a.license||'—')+'</td>'+
+        '<td style="font-size:12px">'+(a.phone||'—')+'</td>'+
+        
+        '<td><span class="badge '+(a.status==='attivo'?'badge-green':'badge-red')+'"><span class="dot"></span>'+a.status+'</span></td>'+
+        '<td><div style="display:flex;gap:6px">'+
+          '<button class="btn btn-ghost btn-sm" onclick="openModalAutista(\''+a.id+'\')">✏️</button>'+
+          '<button class="btn btn-danger btn-sm" onclick="deleteAutista(\''+a.id+'\')">🗑️</button>'+
+        '</div></td></tr>';
+    }).join('');
+  }
+
+  // Mobile cards
+  var mob=document.getElementById('autisti-mobile');
+  if(!list.length){
+    mob.innerHTML='<div class="empty"><div class="empty-icon">👤</div><p>Nessun autista registrato.</p></div>';
+  } else {
+    mob.innerHTML=list.map(function(a){
+      return '<div class="mob-row">'+
+        '<div class="mob-row-header">'+
+          '<div style="display:flex;align-items:center;gap:10px">'+
+            '<div class="avatar" style="background:'+ac(a.name)+';color:#fff">'+initials(a.name)+'</div>'+
+            '<div><div class="mob-row-name">'+a.name+'</div>'+
+            '<div style="font-size:10px;color:var(--muted);font-family:var(--fm)">'+a.contract+'</div></div>'+
+          '</div>'+
+          '<span class="badge '+(a.status==='attivo'?'badge-green':'badge-red')+'"><span class="dot"></span>'+a.status+'</span>'+
+        '</div>'+
+        '<div class="mob-row-fields">'+
+          '<div class="mob-field"><div class="mob-field-label">Patente</div>'+(a.license||'—')+'</div>'+
+          '<div class="mob-field"><div class="mob-field-label">Telefono</div>'+(a.phone||'—')+'</div>'+
+          '<div class="mob-field"><div class="mob-field-label">Paga/giorno</div>'+(a.daily?fmt(a.daily):'—')+'</div>'+
+          '<div class="mob-field"><div class="mob-field-label">Straord.</div>+€10/h oltre 9h</div>'+
+        '</div>'+
+        '<div style="display:flex;gap:8px;margin-top:12px">'+
+          '<button class="btn btn-ghost btn-sm" style="flex:1;justify-content:center" onclick="openModalAutista(\''+a.id+'\')">✏️ Modifica</button>'+
+          '<button class="btn btn-danger btn-sm" onclick="deleteAutista(\''+a.id+'\')">🗑️</button>'+
+        '</div></div>';
+    }).join('');
+  }
+}
+
+// ── CALENDAR ─────────────────────────────────────────────────
+function calPrevMonth(){ calMonth--; if(calMonth<0){calMonth=11;calYear--;} renderCalendar(); }
+function calNextMonth(){ calMonth++; if(calMonth>11){calMonth=0;calYear++;} renderCalendar(); }
+
+function renderCalendar(){
+  var now=new Date(), todayStr=dStr(now);
+  document.getElementById('cal-month-label').textContent=MESI[calMonth]+' '+calYear;
+  var active=state.autisti.filter(function(a){return a.status==='attivo';});
+  var grid=document.getElementById('cal-grid');
+  if(!active.length){
+    grid.innerHTML='<div class="empty"><div class="empty-icon">📋</div><p>Nessun autista attivo.</p></div>'; return;
+  }
+  var dim=new Date(calYear,calMonth+1,0).getDate();
+  var prefix=calYear+'-'+String(calMonth+1).padStart(2,'0');
+  var DOW_IT=['Dom','Lun','Mar','Mer','Gio','Ven','Sab'];
+
+  // Header row
+  var html='<table class="cal-table"><thead><tr>';
+  html+='<th class="driver-th">Autista</th>';
+  for(var d=1;d<=dim;d++){
+    var ds0=prefix+'-'+String(d).padStart(2,'0');
+    var dow=new Date(calYear,calMonth,d).getDay();
+    var we=(dow===0||dow===6), isToday=(ds0===todayStr);
+    var thCls=(we?'th-we':'')+(isToday?' th-today':'');
+    html+='<th class="'+thCls+'">'+
+      '<div style="font-size:13px;font-weight:800;color:'+(we?'var(--accent-l)':'rgba(255,255,255,.85)')+'">'+d+'</div>'+
+      '<div style="font-size:8px;margin-top:1px;opacity:.55">'+DOW_IT[dow].slice(0,3).toUpperCase()+'</div>'+
+    '</th>';
+  }
+  html+='</tr></thead><tbody>';
+
+  active.forEach(function(a){
+    // mini summary for driver subtitle
+    var pC=0,fC=0,xC=0;
+    for(var d=1;d<=dim;d++){
+      var ds2=prefix+'-'+String(d).padStart(2,'0');
+      var rr=state.presenze[ds2]||[];
+      for(var i=0;i<rr.length;i++){
+        if(rr[i].driverId===a.id){
+          if(rr[i].status==='presente') pC++;
+          else if(rr[i].status==='ferie') fC++;
+          else if(rr[i].status==='festivo') xC++;
+          break;
+        }
+      }
+    }
+    var sub=''; if(pC) sub+=pC+'P '; if(fC) sub+=fC+'FR '; if(xC) sub+=xC+'FS';
+    html+='<tr><td class="driver-td">'+
+      '<div class="dn">'+a.name+'</div>'+
+      (sub?'<div class="di">'+sub.trim()+'</div>':'')+
+    '</td>';
+
+    for(var d=1;d<=dim;d++){
+      var ds=prefix+'-'+String(d).padStart(2,'0');
+      var dow=new Date(calYear,calMonth,d).getDay();
+      var we=(dow===0||dow===6), isToday2=(ds===todayStr);
+      var recs=state.presenze[ds]||[];
+      var rec=null;
+      for(var i=0;i<recs.length;i++){if(recs[i].driverId===a.id){rec=recs[i];break;}}
+
+      var cls, sym='', hL='', fL='';
+      if(!rec){
+        cls=we?'s-w':'s-e';
+      } else if(rec.status==='presente'){
+        cls='s-p'; sym='P';
+        if(rec.hours) hL=rec.hours+'h';
+        if(rec.fatturato!=null) fL=fmt(rec.fatturato);
+      } else if(rec.status==='ferie'){
+        cls='s-f'; sym='FR';
+        if(rec.fatturato!=null) fL=fmt(rec.fatturato);
+      } else if(rec.status==='festivo'){
+        cls='s-x'; sym='FS';
+        if(rec.fatturato!=null) fL=fmt(rec.fatturato);
+      } else if(rec.status==='assente'){
+        cls='s-a'; sym='A';
+      } else {
+        cls='s-e';
+      }
+
+      html+='<td class="cal-cell '+cls+(isToday2?' s-today':'')+'"'+
+        ' onclick="openCellPopup(\''+a.id+'\',\''+ds+'\',event)"'+
+        ' title="'+a.name+' · '+ds+(rec&&rec.note?' · '+rec.note:'')+'">' +
+        '<div class="cc-wrap">'+
+          (sym?'<div class="cc-s">'+sym+'</div>':'')+
+          (hL?'<div class="cc-h">'+hL+'</div>':'')+
+          (fL?'<div class="cc-f">'+fL+'</div>':'')+
+        '</div>'+
+      '</td>';
+    }
+    html+='</tr>';
+  });
+  html+='</tbody></table>';
+  grid.innerHTML=html;
+}
+
+// ── CELL POPUP ────────────────────────────────────────────────
+function openCellPopup(driverId,ds,event){
+  popupDriverId=driverId; popupDate=ds;
+  var a=state.autisti.find(function(x){return x.id===driverId;})||{name:'?'};
+  var recs=state.presenze[ds]||[];
+  var rec=null; for(var i=0;i<recs.length;i++){if(recs[i].driverId===driverId){rec=recs[i];break;}}
+  rec=rec||{status:'assente',hours:0,note:''};
+  document.getElementById('popup-title').textContent=a.name+' — '+ds;
+  document.getElementById('popup-status').value=rec.status;
+  document.getElementById('popup-hours').value=rec.hours||0;
+  document.getElementById('popup-note').value=rec.note||'';
+  document.getElementById('popup-fatturato').value=rec.fatturato!=null?rec.fatturato:'';
+  updatePopupHint();
+  var popup=document.getElementById('cell-popup');
+  popup.style.display='block';
+  if(isMobile()){
+    popup.style.left='50%'; popup.style.top='50%';
+    popup.style.transform='translate(-50%,-50%)';
+  } else {
+    popup.style.transform='';
+    var x=Math.min(event.clientX+5,window.innerWidth-260);
+    var y=Math.min(event.clientY+5,window.innerHeight-280);
+    popup.style.left=x+'px'; popup.style.top=y+'px';
+  }
+  event.stopPropagation();
+}
+function closePopup(){
+  document.getElementById('cell-popup').style.display='none';
+  popupDriverId=null; popupDate=null;
+}
+function updatePopupHint(){
+  var a=state.autisti.find(function(x){return x.id===popupDriverId;})||{};
+  var status=document.getElementById('popup-status').value;
+  var hours=parseFloat(document.getElementById('popup-hours').value)||0;
+  var paga=calcAmt(status,hours,a.daily||0);
+  var hint=document.getElementById('popup-fatturato-hint');
+  if(hint) hint.textContent=a.daily?'Paga autista: '+fmt(paga)+' · Inserire quanto si fattura al cliente':'';
+}
+function autoFatturato(){
+  var a=state.autisti.find(function(x){return x.id===popupDriverId;})||{};
+  var status=document.getElementById('popup-status').value;
+  var hours=parseFloat(document.getElementById('popup-hours').value)||0;
+  var paga=calcAmt(status,hours,a.daily||0);
+  document.getElementById('popup-fatturato').value=paga.toFixed(2);
+}
+function saveCell(){
+  if(!popupDriverId||!popupDate) return;
+  var a=state.autisti.find(function(x){return x.id===popupDriverId;})||{};
+  var status=document.getElementById('popup-status').value;
+  var hours =parseFloat(document.getElementById('popup-hours').value)||0;
+  var note  =document.getElementById('popup-note').value.trim();
+  var amount=calcAmt(status,hours,a.daily||0);
+  var fattv =document.getElementById('popup-fatturato').value;
+  var fatturato=fattv!==''?parseFloat(fattv)||0:null;
+  if(status!=='presente') hours=0;
+  if(!state.presenze[popupDate]) state.presenze[popupDate]=[];
+  var idx=-1;
+  for(var i=0;i<state.presenze[popupDate].length;i++){
+    if(state.presenze[popupDate][i].driverId===popupDriverId){idx=i;break;}
+  }
+  var rec={driverId:popupDriverId,status:status,hours:hours,note:note,amount:amount,fatturato:fatturato};
+  if(idx>=0) state.presenze[popupDate][idx]=rec; else state.presenze[popupDate].push(rec);
+  save(); closePopup(); renderCalendar(); renderDashboard(); toast('Salvato!');
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────
+function renderDashboard(){
+  var today=dStr(new Date());
+  var tr=state.presenze[today]||[];
+  var active=state.autisti.filter(function(a){return a.status==='attivo';});
+  var present=tr.filter(function(r){return r.status==='presente';}).length;
+  document.getElementById('stat-total').textContent=state.autisti.length;
+  document.getElementById('stat-present').textContent=present;
+  document.getElementById('stat-absent').textContent=active.length-present;
+  var now=new Date(), pfx=dStr(now).slice(0,7), mT=0;
+  Object.entries(state.presenze).forEach(function(e){
+    if(e[0].startsWith(pfx)) e[1].forEach(function(r){mT+=(r.fatturato!=null?r.fatturato:0);});
+  });
+  document.getElementById('stat-revenue').textContent=fmt(mT);
+  document.getElementById('stat-month-label').textContent=MESI[now.getMonth()]+' '+now.getFullYear();
+
+}
+
+// ── FATTURAZIONE ──────────────────────────────────────────────
+function renderBilling(){
+  var month=parseInt(document.getElementById('billing-month').value);
+  var year =parseInt(document.getElementById('billing-year').value);
+  var prefix=year+'-'+String(month).padStart(2,'0');
+  var el=document.getElementById('billing-content');
+  var active=state.autisti.filter(function(a){return a.status==='attivo';});
+  if(!active.length){ el.innerHTML='<div class="empty"><div class="empty-icon">💶</div><p>Nessun autista attivo</p></div>'; return; }
+  var gTotal=0, gFattTotal=0, gDays=0;
+  el.innerHTML=active.map(function(a){
+    var amt=0,days=0,hrs=0,recs=[],fattTot=0,gFatt=0;
+    Object.entries(state.presenze).forEach(function(e){
+      if(!e[0].startsWith(prefix)) return;
+      var r=e[1].find(function(x){return x.driverId===a.id;}); if(!r) return;
+      amt+=r.amount||0; if(r.fatturato!=null) fattTot+=r.fatturato; recs.push(Object.assign({date:e[0]},r));
+      if(r.status==='presente'){days++;hrs+=r.hours||0;}
+      else if(r.status==='ferie'||r.status==='festivo') days++;
+    });
+    recs.sort(function(a,b){return a.date.localeCompare(b.date);});
+    gTotal+=amt; gFattTotal+=fattTot; gDays+=days;
+    return '<div class="billing-card">'+
+      '<div class="billing-card-header">'+
+        '<div class="avatar" style="background:'+ac(a.name)+';color:#fff">'+initials(a.name)+'</div>'+
+        '<div style="flex:1"><div style="font-weight:600;font-size:15px">'+a.name+'</div>'+
+        '<div style="font-size:10px;color:var(--muted);font-family:var(--fm);margin-top:2px">'+days+' giorni · '+hrs.toFixed(1)+' ore lavorate</div></div>'+
+        '<div class="billing-total">'+fmt(fattTot)+'</div>'+
+      '</div>'+
+      (recs.length?
+        '<div class="table-wrap"><table><thead><tr><th>Data</th><th>Stato</th><th>Ore</th><th>Fatturato</th></tr></thead><tbody>'+
+        recs.map(function(r){
+          var ex=Math.max(0,(r.hours||0)-9);
+          var paga=r.amount||0;
+          var fatt=r.fatturato!=null?r.fatturato:null;
+          var margine=fatt!=null?fatt-paga:null;
+          return '<tr>'+
+            '<td style="font-family:var(--fm);font-size:11px">'+r.date+'</td>'+
+            '<td><span class="badge '+(statusBadge[r.status]||'badge-orange')+'"><span class="dot"></span>'+(statusLabel[r.status]||r.status)+'</span></td>'+
+            '<td style="font-family:var(--fm);color:var(--muted)">'+(r.hours||'—')+'</td>'+
+            '<td style="font-family:var(--fm);font-size:14px;font-weight:700;color:var(--accent)">'+
+              (fatt!=null?fmt(fatt):'<span style="color:var(--muted);font-size:11px;font-weight:400">—</span>')+'</td></tr>';
+        }).join('')+'</tbody></table></div>'
+        :'<div class="empty" style="padding:16px"><p>Nessuna presenza</p></div>')+
+    '</div>';
+  }).join('')+
+  '<div class="stat-card blue" style="margin-top:16px">'+
+    '<div class="stat-icon">📋</div>'+
+    '<div class="stat-label">Totale Fatturato — '+MESI[month-1]+' '+year+'</div>'+
+    '<div class="stat-value blue">'+fmt(gFattTotal)+'</div>'+
+    '<div class="stat-sub">'+(state.autisti.filter(function(a){return a.status==="attivo";}).length)+' autisti · '+gDays+' giornate</div>'+
+  '</div>';
+}
+
+
+
+// ── EXPORT CSV ────────────────────────────────────────────────
+function exportCSV(){
+  var m=parseInt(document.getElementById('billing-month').value);
+  var y=parseInt(document.getElementById('billing-year').value);
+  doExport(y+'-'+String(m).padStart(2,'0'));
+}
+function exportCSVPresenze(){ doExport(calYear+'-'+String(calMonth+1).padStart(2,'0')); }
+function doExport(prefix){
+  var rows=[['Data','Autista','Stato','Ore','Paga Autista','Fatturato Cliente','Note']];
+  Object.entries(state.presenze).forEach(function(e){
+    if(!e[0].startsWith(prefix)) return;
+    e[1].forEach(function(r){
+      var a=state.autisti.find(function(x){return x.id===r.driverId;})||{name:'?'};
+      rows.push([e[0],a.name,r.status,r.hours||0,(r.amount||0).toFixed(2),r.fatturato!=null?r.fatturato.toFixed(2):'',r.note||'']);
+    });
+  });
+  rows.sort(function(a,b){return a[0].localeCompare(b[0]);});
+  var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
+  var blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a'); a.href=url; a.download='presenze_'+prefix+'.csv'; a.click();
+  toast('CSV esportato!');
+}
+
+// ── EXPORT PDF ───────────────────────────────────────────────
+function exportPDF(){
+  var month    = parseInt(document.getElementById('billing-month').value);
+  var year     = parseInt(document.getElementById('billing-year').value);
+  var prefix   = year+'-'+String(month).padStart(2,'0');
+  var meseNome = MESI[month-1]+' '+year;
+  var active   = state.autisti.filter(function(a){return a.status==='attivo';});
+  if(!active.length){ toast('Nessun autista attivo'); return; }
+
+  var { jsPDF } = window.jspdf;
+  // Use landscape for the grid table
+  var doc = new jsPDF({ orientation:'landscape', unit:'mm', format:'a4' });
+  var W=297, H=210, ML=12, MR=12, CT=W-ML-MR;
+
+  var C={
+    white:[255,255,255], surface:[247,248,252], border:[221,225,237],
+    border2:[200,208,228], text:[15,22,41], text2:[55,66,100], muted:[107,116,148],
+    accent:[224,123,0], accentL:[255,237,213],
+    green:[22,163,74],   greenL:[235,252,242],
+    blue:[29,111,206],   blueL:[235,245,255],
+    purple:[124,58,237], purpleL:[243,240,255],
+    red:[220,38,38],     redL:[254,242,242],
+    navy:[15,22,41],     navyM:[30,40,70]
+  };
+  function sf(c){doc.setFillColor(c[0],c[1],c[2]);}
+  function st(c){doc.setTextColor(c[0],c[1],c[2]);}
+  function sd(c){doc.setDrawColor(c[0],c[1],c[2]);}
+
+  function pageBg(){
+    sf(C.white); doc.rect(0,0,W,H,'F');
+  }
+  function runningHeader(p){
+    pageBg();
+    sf(C.navy); doc.rect(0,0,W,14,'F');
+    sf(C.accent); doc.rect(0,0,4,14,'F');
+    st(C.accent); doc.setFontSize(8); doc.setFont('helvetica','bold');
+    doc.text('GML SRLS', 8, 9);
+    st([200,210,230]); doc.setFontSize(7); doc.setFont('helvetica','normal');
+    doc.text('Report Presenze  ·  '+meseNome.toUpperCase(), 60, 9);
+    st([160,170,200]);
+    doc.text('Pag. '+p, W-ML, 9, {align:'right'});
+    sf(C.border); doc.rect(0,14,W,0.3,'F');
+  }
+  function pageFooter(p, tot){
+    sf(C.navy); doc.rect(0,H-10,W,10,'F');
+    sf(C.accent); doc.rect(0,H-10,W,0.6,'F');
+    st([160,170,200]); doc.setFontSize(6.5); doc.setFont('helvetica','normal');
+    doc.text('GML SRLS — Documento riservato ad uso interno.', ML, H-4);
+    doc.text('Pagina '+p+' di '+tot, W-MR, H-4, {align:'right'});
+  }
+
+  // ── PAGE 1: COVER HEADER + SUMMARY TABLE ──────────────────────────
+  pageBg();
+  // Cover header tall
+  sf(C.navy); doc.rect(0,0,W,36,'F');
+  sf(C.accent); doc.rect(0,0,4,36,'F');
+  sf([22,29,50]); doc.rect(W-52,0,52,36,'F');
+  sf([30,38,60]); doc.roundedRect(W-46,3,38,30,3,3,'F');
+  st(C.accent); doc.setFontSize(18); doc.setFont('helvetica','bold');
+  doc.text('TM', W-27, 22, {align:'center'});
+  st(C.white); doc.setFontSize(18); doc.setFont('helvetica','bold');
+  doc.text('GML SRLS', 8, 16);
+  st(C.accent); doc.setFontSize(10); doc.setFont('helvetica','bold');
+  doc.text('REPORT PRESENZE', 8, 24);
+  st([180,190,210]); doc.setFontSize(7.5); doc.setFont('helvetica','normal');
+  doc.text(meseNome.toUpperCase()+'   ·   '+active.length+' AUTISTI', 8, 30);
+  doc.text('Generato il '+new Date().toLocaleDateString('it-IT'), 8, 34.5);
+  sf(C.border); doc.rect(0,36,W,0.3,'F');
+
+  var y = 42;
+
+  // ── LEGEND BOX
+  st(C.muted); doc.setFontSize(7); doc.setFont('helvetica','normal');
+  doc.text('Legenda:', ML, y);
+  sf(C.greenL);  doc.roundedRect(ML+22,y-4,14,5.5,1,1,'F');
+  sf(C.blueL);   doc.roundedRect(ML+38,y-4,14,5.5,1,1,'F');
+  sf(C.purpleL); doc.roundedRect(ML+54,y-4,14,5.5,1,1,'F');
+  sf(C.redL);    doc.roundedRect(ML+70,y-4,14,5.5,1,1,'F');
+  st(C.green);  doc.setFontSize(7); doc.setFont('helvetica','bold'); doc.text('P = Presenza', ML+23.5, y);
+  st(C.blue);   doc.text('FR = Ferie',    ML+39.5, y);
+  st(C.purple); doc.text('FS = Festivo',  ML+55.5, y);
+  st(C.red);    doc.text('A = Assente',   ML+71.5, y);
+  y += 5;
+
+  // Section title
+  st(C.text); doc.setFontSize(9); doc.setFont('helvetica','bold');
+  doc.text('RIEPILOGO MENSILE', ML, y+5);
+  sf(C.accent); doc.rect(ML,y+6.5,28,0.6,'F');
+  y += 10;
+
+  // ── SUMMARY TABLE ──────────────────────────────────────────
+  var summaryRows = active.map(function(a){
+    var ggL=0,ggF=0,ggX=0,base=0,straord=0,oreExtra=0;
+    Object.entries(state.presenze).forEach(function(e){
+      if(!e[0].startsWith(prefix)) return;
+      var r=e[1].find(function(x){return x.driverId===a.id;}); if(!r) return;
+      if(r.status==='presente'){
+        ggL++; base+=(a.daily||0);
+        var ex=Math.max(0,(r.hours||0)-9);
+        if(ex>0){straord+=ex*10; oreExtra+=ex;}
+      } else if(r.status==='ferie'){ggF++;base+=70;}
+      else if(r.status==='festivo'){ggX++;base+=70;}
+    });
+    return [a.name, ggL, ggF, ggX, 'EUR '+base.toFixed(2), oreExtra>0?'EUR '+straord.toFixed(2)+' ('+oreExtra+'h)':'EUR 0.00'];
+  });
+
+  doc.autoTable({
+    startY: y,
+    margin:{left:ML,right:MR},
+    head:[['Autista','Giorni Lavorati','Giorni Ferie','Giorni Festivi','Stipendio (inc. ferie/festivi)','Straordinari']],
+    body: summaryRows,
+    theme:'plain',
+    tableLineColor:C.border, tableLineWidth:0.3,
+    styles:{font:'helvetica',fontSize:8.5,cellPadding:{top:4,bottom:4,left:5,right:5},
+      textColor:C.text2,fillColor:C.white,lineColor:C.border,lineWidth:0.25,valign:'middle'},
+    headStyles:{fillColor:C.navy,textColor:[200,210,230],fontSize:7.5,fontStyle:'bold',
+      cellPadding:{top:5,bottom:5,left:5,right:5}},
+    columnStyles:{
+      0:{cellWidth:42,fontStyle:'bold',textColor:C.text},
+      1:{cellWidth:28,halign:'center',textColor:C.green,fontStyle:'bold'},
+      2:{cellWidth:24,halign:'center',textColor:C.blue,fontStyle:'bold'},
+      3:{cellWidth:24,halign:'center',textColor:C.purple,fontStyle:'bold'},
+      4:{cellWidth:52,halign:'right',textColor:C.accent,fontStyle:'bold'},
+      5:{cellWidth:'auto',halign:'right',textColor:C.muted}
+    },
+    alternateRowStyles:{fillColor:C.surface}
+  });
+  y = doc.lastAutoTable.finalY + 16;
+
+  // Section title grid
+  st(C.text); doc.setFontSize(9); doc.setFont('helvetica','bold');
+  doc.text('CALENDARIO PRESENZE', ML, y);
+  sf(C.accent); doc.rect(ML,y+1.5,38,0.6,'F');
+  y += 7;
+
+  // ── GRID TABLE (Excel style) ────────────────────────────────
+  var dim = new Date(year, month, 0).getDate();
+  var DOW2 = ['D','L','M','M','G','V','S'];
+
+  // Build header: first col = Autista, then 1..dim
+  var gridHead = [['Autista']];
+  for(var d=1;d<=dim;d++){
+    var dow=new Date(year,month-1,d).getDay();
+    gridHead[0].push(d+'\n'+DOW2[dow]);
+  }
+
+  var gridRows = active.map(function(a){
+    var row=[a.name];
+    for(var d=1;d<=dim;d++){
+      var ds=prefix+'-'+String(d).padStart(2,'0');
+      var recs=state.presenze[ds]||[];
+      var r=null; for(var i=0;i<recs.length;i++){if(recs[i].driverId===a.id){r=recs[i];break;}}
+      var dow=new Date(year,month-1,d).getDay();
+      var we=(dow===0||dow===6);
+      if(we && !r){ row.push(''); continue; }
+      if(!r){ row.push(''); continue; }
+      var sym={presente:'P',ferie:'FR',festivo:'FS',assente:'A'}[r.status]||'';
+      row.push(sym);
+    }
+    return row;
+  });
+
+  // column widths: name col wide, day cols narrow
+  var dayCW = Math.min(6.8, (CT-42)/(dim));
+  var colStyles={0:{cellWidth:42,fontStyle:'bold',textColor:C.text,fontSize:8}};
+  for(var d=1;d<=dim;d++) colStyles[d]={cellWidth:dayCW,halign:'center',fontSize:7,cellPadding:{top:2.5,bottom:2.5,left:0.5,right:0.5}};
+
+  doc.autoTable({
+    startY: y,
+    margin:{left:ML,right:MR},
+    head: gridHead,
+    body: gridRows,
+    theme:'plain',
+    tableLineColor:C.border, tableLineWidth:0.25,
+    styles:{font:'helvetica',fontSize:7,cellPadding:{top:2.5,bottom:2.5,left:1,right:1},
+      textColor:C.text2,fillColor:C.white,lineColor:C.border,lineWidth:0.2,valign:'middle'},
+    headStyles:{fillColor:C.navy,textColor:[200,210,230],fontSize:6.5,fontStyle:'bold',halign:'center',
+      cellPadding:{top:3,bottom:3,left:1,right:1}},
+    columnStyles: colStyles,
+    alternateRowStyles:{fillColor:C.surface},
+    didParseCell:function(d){
+      if(d.section==='head' && d.column.index>0){
+        var dayN=parseInt(d.cell.raw);
+        if(!isNaN(dayN)){
+          var dow2=new Date(year,month-1,dayN).getDay();
+          if(dow2===0||dow2===6) d.cell.styles.fillColor=[240,235,255];
+        }
+      }
+      if(d.section==='body' && d.column.index>0){
+        var v=d.cell.raw;
+        var dayN2=d.column.index;
+        var dow3=new Date(year,month-1,dayN2).getDay();
+        if(dow3===0||dow3===6) d.cell.styles.fillColor=[248,246,255];
+        if(v==='P') {d.cell.styles.textColor=C.green;  d.cell.styles.fontStyle='bold'; d.cell.styles.fillColor=C.greenL;}
+        else if(v==='FR'){d.cell.styles.textColor=C.blue;  d.cell.styles.fontStyle='bold'; d.cell.styles.fillColor=C.blueL;}
+        else if(v==='FS'){d.cell.styles.textColor=C.purple;d.cell.styles.fontStyle='bold'; d.cell.styles.fillColor=C.purpleL;}
+        else if(v==='A') {d.cell.styles.textColor=C.red;   d.cell.styles.fillColor=C.redL;}
+      }
+    }
+  });
+
+  // ── FOOTER on all pages
+  var totalPages=doc.internal.getNumberOfPages();
+  for(var p=1;p<=totalPages;p++){
+    doc.setPage(p);
+    pageFooter(p,totalPages);
+    if(p>1){
+      // redraw running header page number
+      sf(C.navy); doc.rect(W-35,0,35,14,'F');
+      st([160,170,200]); doc.setFontSize(7);
+      doc.text('Pag. '+p+' di '+totalPages, W-MR, 9, {align:'right'});
+    }
+  }
+
+  doc.save('report_presenze_'+prefix+'.pdf');
+  toast('Report Presenze esportato!');
+}
+
+function installPWA(){
+  if(_installPrompt){
+    _installPrompt.prompt();
+    _installPrompt.userChoice.then(function(r){
+      if(r.outcome==='accepted'){ document.getElementById('btn-install').style.display='none'; }
+      _installPrompt=null;
+    });
+  }
+}
+
+// ── EXPORT FATTURATO PDF ─────────────────────────────────────
+function exportFatturatoPDF(){
+  var month    = parseInt(document.getElementById('billing-month').value);
+  var year     = parseInt(document.getElementById('billing-year').value);
+  var prefix   = year+'-'+String(month).padStart(2,'0');
+  var meseNome = MESI[month-1]+' '+year;
+  var active   = state.autisti.filter(function(a){return a.status==='attivo';});
+  if(!active.length){ toast('Nessun autista attivo'); return; }
+
+  var { jsPDF } = window.jspdf;
+  var doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+  var W=210, H=297, ML=14, MR=14, CT=W-ML-MR;
+
+  var C = {
+    white:[255,255,255], bg:[240,242,247], surface:[247,248,252],
+    border:[221,225,237], text:[15,22,41], text2:[55,66,100],
+    muted:[107,116,148], accent:[224,123,0], accentL:[255,237,213],
+    green:[22,163,74], greenL:[240,253,244], navy:[15,22,41]
+  };
+  function setFill(c){doc.setFillColor(c[0],c[1],c[2]);}
+  function setTxt(c) {doc.setTextColor(c[0],c[1],c[2]);}
+  function setDraw(c){doc.setDrawColor(c[0],c[1],c[2]);}
+
+  // ── Cover header
+  setFill(C.navy); doc.rect(0,0,W,42,'F');
+  setFill(C.accent); doc.rect(0,0,5,42,'F');
+  setFill([22,29,50]); doc.rect(W-40,0,40,42,'F');
+  setFill([30,38,60]); doc.roundedRect(W-35,4,28,34,3,3,'F');
+  setTxt(C.accent);
+  doc.setFontSize(22); doc.setFont('helvetica','bold');
+  doc.text('EUR', W-21, 25.5, {align:'center'});
+  setTxt(C.white);
+  doc.setFontSize(20); doc.setFont('helvetica','bold');
+  doc.text('GML SRLS', 9, 18);
+  setTxt(C.accent);
+  doc.setFontSize(11); doc.setFont('helvetica','bold');
+  doc.text('REPORT FATTURATO', 9, 26);
+  setTxt([180,190,210]);
+  doc.setFontSize(8); doc.setFont('helvetica','normal');
+  doc.text(meseNome.toUpperCase()+'   ·   '+active.length+' AUTISTI', 9, 33);
+  doc.text('Generato il '+new Date().toLocaleDateString('it-IT'), 9, 38.5);
+
+  // Collect all rows
+  var allRows = [];
+  var grandTotal = 0;
+  active.forEach(function(a){
+    Object.entries(state.presenze).forEach(function(e){
+      if(!e[0].startsWith(prefix)) return;
+      var r = e[1].find(function(x){return x.driverId===a.id;});
+      if(!r || r.fatturato==null) return;
+      allRows.push({
+        date: e[0],
+        driver: a.name,
+        note: r.note||'',
+        fatturato: r.fatturato
+      });
+      grandTotal += r.fatturato;
+    });
+  });
+  allRows.sort(function(a,b){
+    return a.date.localeCompare(b.date)||a.driver.localeCompare(b.driver);
+  });
+
+  var tableRows = allRows.map(function(r){
+    return [
+      r.date.slice(8)+'/'+r.date.slice(5,7)+'/'+r.date.slice(0,4),
+      r.driver,
+      r.note||'—',
+      'EUR '+r.fatturato.toFixed(2)
+    ];
+  });
+
+  // Grand total row
+  tableRows.push(['','','TOTALE', 'EUR '+grandTotal.toFixed(2)]);
+
+  doc.autoTable({
+    startY: 50,
+    margin: {left:ML, right:MR},
+    head: [['Data','Autista','Note','Fatturato']],
+    body: tableRows,
+    theme: 'plain',
+    tableLineColor: C.border,
+    tableLineWidth: 0.3,
+    styles:{
+      font:'helvetica', fontSize:9, cellPadding:{top:4,bottom:4,left:5,right:5},
+      textColor:C.text2, fillColor:C.white, lineColor:C.border, lineWidth:0.25,
+      valign:'middle'
+    },
+    headStyles:{
+      fillColor:C.navy, textColor:[200,210,230],
+      fontSize:8, fontStyle:'bold',
+      cellPadding:{top:5,bottom:5,left:5,right:5}
+    },
+    columnStyles:{
+      0:{cellWidth:28, halign:'center', fontStyle:'bold', textColor:C.text},
+      1:{cellWidth:50, fontStyle:'bold'},
+      2:{cellWidth:'auto', fontSize:8, textColor:C.muted},
+      3:{cellWidth:36, halign:'right', fontStyle:'bold', textColor:C.accent}
+    },
+    alternateRowStyles:{fillColor:C.surface},
+    didParseCell: function(d){
+      // Total row styling
+      if(d.section==='body' && d.row.index===tableRows.length-1){
+        d.cell.styles.fillColor=C.accentL;
+        d.cell.styles.fontStyle='bold';
+        d.cell.styles.fontSize=9.5;
+        if(d.column.index===2) d.cell.styles.textColor=C.text;
+        if(d.column.index===3) d.cell.styles.textColor=C.accent;
+      }
+    }
+  });
+
+  // Footer
+  var totalPages = doc.internal.getNumberOfPages();
+  for(var p=1;p<=totalPages;p++){
+    doc.setPage(p);
+    setFill(C.navy); doc.rect(0,H-12,W,12,'F');
+    setFill(C.accent); doc.rect(0,H-12,W,0.7,'F');
+    setTxt([160,170,200]);
+    doc.setFontSize(7); doc.setFont('helvetica','normal');
+    doc.text('GML SRLS — Documento riservato. Uso interno.', ML, H-5.5);
+    doc.text('Pagina '+p+' di '+totalPages, W-MR, H-5.5, {align:'right'});
+  }
+
+  doc.save('report_fatturato_'+prefix+'.pdf');
+  toast('Report Fatturato esportato!');
+}
+
+// ── TOAST ─────────────────────────────────────────────────────
+function toast(msg){
+  var t=document.getElementById('toast');
+  t.textContent='✅ '+msg; t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},2200);
+}
+</script>
+
+<!-- SYNC MODAL -->
+<div id="modal-sync" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:none;align-items:center;justify-content:center">
+  <div style="background:var(--surface);border-radius:16px;padding:28px;width:90%;max-width:480px;box-shadow:0 20px 60px rgba(0,0,0,.25);position:relative">
+    <button onclick="closeSyncModal()" style="position:absolute;top:14px;right:14px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted)">✕</button>
+    <h3 style="font-family:var(--fh);font-size:17px;margin:0 0 4px;color:var(--text)">☁️ Sincronizzazione Online</h3>
+    <p style="font-size:12px;color:var(--muted);margin:0 0 20px">I dati vengono sincronizzati automaticamente su tutti i PC collegati.</p>
+
+    <!-- Status -->
+    <div id="sync-status-box" style="padding:10px 14px;border-radius:10px;background:var(--surface2);border:1px solid var(--border);margin-bottom:18px;font-size:12px;color:var(--muted)">
+      ⬜ Non configurato — inserisci le credenziali Firebase qui sotto.
+    </div>
+
+    <!-- Fields -->
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px">
+      <div>
+        <label style="font-size:11px;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">API KEY</label>
+        <input id="fb-apikey" type="text" placeholder="AIzaSy..." style="width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:var(--fm);box-sizing:border-box">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">PROJECT ID</label>
+        <input id="fb-projectid" type="text" placeholder="gml-srls-12345" style="width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:var(--fm);box-sizing:border-box">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:600;color:var(--text2);display:block;margin-bottom:4px">CODICE AZIENDA <span style="font-weight:400;color:var(--muted)">(stesso su tutti i PC)</span></label>
+        <input id="fb-company" type="text" placeholder="gml-srls" style="width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:var(--fm);box-sizing:border-box">
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-bottom:16px">
+      <button onclick="saveSyncConfig()" class="btn btn-primary btn-sm" style="flex:1">💾 Salva e Connetti</button>
+      <button onclick="syncNow()" class="btn btn-ghost btn-sm" style="flex:1" id="btn-sync-now">🔄 Sincronizza Ora</button>
+    </div>
+
+    <div style="background:var(--blue-bg,#eff6ff);border:1px solid #bfdbfe;border-radius:10px;padding:12px 14px">
+      <div style="font-size:11px;font-weight:700;color:var(--blue);margin-bottom:6px">📋 Come configurare (gratis, 5 minuti):</div>
+      <ol style="font-size:11px;color:var(--text2);margin:0;padding-left:18px;line-height:1.8">
+        <li>Vai su <strong>console.firebase.google.com</strong></li>
+        <li>Crea un nuovo progetto (nome qualsiasi)</li>
+        <li>Clicca <strong>Firestore Database</strong> → Crea database → <em>Modalità test</em></li>
+        <li>Vai in <strong>Impostazioni progetto</strong> → copia <em>API Key</em> e <em>Project ID</em></li>
+        <li>Incolla i valori qui sopra e clicca <strong>Salva e Connetti</strong></li>
+        <li>Installa l'app su tutti i PC e inserisci le <strong>stesse credenziali</strong></li>
+      </ol>
+    </div>
+
+    <button onclick="disconnectSync()" style="margin-top:12px;background:none;border:none;color:var(--red);font-size:11px;cursor:pointer;text-decoration:underline">Disconnetti e usa solo locale</button>
+  </div>
+</div>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('sw.js').then(function(reg){
+      console.log('SW registered');
+    }).catch(function(e){ console.log('SW error',e); });
+  });
+}
+
+// PWA install prompt
+var _installPrompt = null;
+window.addEventListener('beforeinstallprompt', function(e){
+  e.preventDefault();
+  _installPrompt = e;
+  var btn = document.getElementById('btn-install');
+  if(btn) btn.style.display = 'flex';
+});
+</script>
+</body>
+</html>
